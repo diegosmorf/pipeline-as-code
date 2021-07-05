@@ -1,0 +1,22 @@
+parameters:
+  AzureSubscription: ''
+  Environment: ''
+  AppName: ''
+  CodeArea: ''
+  Location: ''
+  BuildNumber: ''
+  ReleaseNumber: ''  
+
+steps:     
+
+- task: CmdLine@2
+  displayName: 'Print Variables'
+  inputs:
+    script: |      
+      echo 'AzureSubscription:' ${{parameters.AzureSubscription}}
+      echo 'Environment:' ${{parameters.Environment}}
+      echo 'AppName:' ${{parameters.AppName}}
+      echo 'CodeArea:' ${{parameters.CodeArea}}
+      echo 'Location:' ${{parameters.Location}}      
+      echo 'BuildNumber:'${{parameters.BuildNumber}}
+      echo 'ReleaseNumber' ${{parameters.ReleaseNumber}}

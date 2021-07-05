@@ -1,0 +1,42 @@
+parameters:
+  AzureSubscription: ''
+  Environment: ''
+  AppName: ''
+  CodeArea: ''
+  Location: ''
+  BuildNumber: ''
+  ReleaseNumber: '' 
+
+steps:
+  - template: pipeline-template-print-variables.yml
+    parameters:
+      AzureSubscription: ${{parameters.AzureSubscription}}
+      Environment: ${{parameters.Environment}}
+      AppName: ${{parameters.AppName}}
+      CodeArea: ${{parameters.CodeArea}}
+      Location: ${{parameters.Location}}
+      BuildNumber: ${{parameters.BuildNumber}}
+      ReleaseNumber: ${{parameters.ReleaseNumber}}
+
+  - task: replacetokens@3
+    displayName: 'Replace Variables'
+    inputs:
+      rootDirectory: '$(System.DefaultWorkingDirectory)/src'
+      targetFiles: '**/*parameters.json'
+      encoding: 'auto'
+      writeBOM: true
+      actionOnMissing: 'warn'
+      keepToken: false
+      tokenPrefix: '#{'
+      tokenSuffix: '}#'
+      useLegacyPattern: false
+      enableTransforms: false
+      enableTelemetry: true
+  - task: AzureCLI@2
+    displayName: 'Deploy Artifact'
+    inputs:
+      azureSubscription: '${{parameters.AzureSubscription}}'
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: 'az deployment sub create -f ./template.001.bicep -l $(Location) -p ./template.parameters.json'
+      workingDirectory: '$(Build.SourcesDirectory)/src'

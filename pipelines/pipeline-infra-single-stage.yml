@@ -1,0 +1,17 @@
+trigger:
+  none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:  
+    - group: library-global
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build    
+    steps:          
+      - template: pipeline-template-build.yml
+        parameters:
+          AzureSubscription: $(AzureServiceConnection)

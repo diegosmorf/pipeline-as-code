@@ -1,0 +1,17 @@
+parameters:
+  AzureSubscription: ''
+
+steps:
+  - task: AzureCLI@2  
+    displayName: 'Build Artifact' 
+    inputs: 
+      azureSubscription: ${{parameters.AzureSubscription}}
+      scriptType: 'pscore'  
+      scriptLocation: 'inlineScript'  
+      inlineScript: 'az bicep build --file src/template.001.bicep' 
+  - task: PublishBuildArtifacts@1 
+    displayName: 'Publish Artifact' 
+    inputs: 
+      PathtoPublish: '$(Build.SourcesDirectory)/src'
+      ArtifactName: 'drop'  
+      publishLocation: 'Container' 

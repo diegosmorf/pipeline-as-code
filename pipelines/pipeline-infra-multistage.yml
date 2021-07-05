@@ -1,0 +1,84 @@
+trigger:
+  none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:  
+    - group: library-global
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build    
+    steps:    
+      - script: echo $(AzureServiceConnection)
+      - template: pipeline-template-build.yml
+        parameters:
+          AzureSubscription: $(AzureServiceConnection)
+
+- stage: Release
+  jobs:   
+  - deployment: Release_DEV
+    variables:  
+      - group: library-dev-app-001 
+    displayName: 'DEV'
+    environment:  '$(Environment)-$(AppName)'
+    strategy:           
+      runOnce:
+        deploy:
+          steps:                    
+            - checkout: self
+            - template: pipeline-template-deploy.yml
+              parameters:
+                AzureSubscription: $(AzureServiceConnection)
+                Environment: $(Environment)
+                AppName: $(AppName)
+                CodeArea: $(CodeArea)
+                Location: $(Location)
+                BuildNumber: $(Build.BuildNumber)
+                ReleaseNumber: $(Release.ReleaseId)
+
+  - deployment: Release_QA
+    dependsOn:
+      Release_DEV
+    variables:  
+      - group: library-qa-app-001 
+    displayName: 'QA'
+    environment: '$(Environment)-$(AppName)'
+    strategy:           
+      runOnce:
+        deploy:
+          steps:                    
+            - checkout: self
+            - template: pipeline-template-deploy.yml
+              parameters:
+                AzureSubscription: $(AzureServiceConnection)
+                Environment: $(Environment)
+                AppName: $(AppName)
+                CodeArea: $(CodeArea)
+                Location: $(Location)
+                BuildNumber: $(Build.BuildNumber)
+                ReleaseNumber: $(Release.ReleaseId)
+
+  - deployment: Release_PRD
+    dependsOn:
+      Release_QA
+    variables:  
+      - group: library-prd-app-001 
+    displayName: 'PRD'
+    environment: '$(Environment)-$(AppName)'
+    strategy:           
+      runOnce:
+        deploy:
+          steps:                    
+            - checkout: self
+            - template: pipeline-template-deploy.yml
+              parameters:
+                AzureSubscription: $(AzureServiceConnection)
+                Environment: $(Environment)
+                AppName: $(AppName)
+                CodeArea: $(CodeArea)
+                Location: $(Location)
+                BuildNumber: $(Build.BuildNumber)
+                ReleaseNumber: $(Release.ReleaseId)
