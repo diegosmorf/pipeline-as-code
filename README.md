@@ -25,14 +25,8 @@ The basic premise of IaC is everything is a code. We can compare to application 
 
 To get going with Bicep:
 
-1. **Start by [installing the tooling](https://github.com/Azure/bicep/blob/main/docs/installing.md).**
-1. **Complete the [Bicep tutorial](https://github.com/Azure/bicep/blob/main/docs/tutorial/01-simple-template.md)**
-
-Alternatively, you can try the [Bicep Playground](https://aka.ms/bicepdemo) or use the [VS Code Devcontainer/Codespaces](https://github.com/Azure/vscode-remote-try-bicep) repo to get a preconfigured environment.
-
-If you have an existing ARM Template or set of resources that you would like to convert to `.bicep` format, see [Decompiling an ARM Template](https://github.com/Azure/bicep/blob/main/docs/decompiling.md).
-
-Full details of how the bicep language works can be found in the [Bicep documentation](https://github.com/Azure/bicep/tree/main/docs) and there is a rich library of [examples](https://github.com/Azure/bicep/tree/main/docs/examples) to help you get a jumpstart.
+1. **Start by [installing the tooling](./docs/installing.md).**
+1. **Complete the [(Practical Trainings/DOJO)](./docs/tutorial/00-tutorial-step.md)**
 
 ## What unique benefits do you get with Bicep?
 
@@ -49,7 +43,7 @@ Bicep is more of a revision to the existing ARM template language rather than an
 
 ## How does Bicep work?
 
-First, author your Bicep code using the Bicep language service as part of the [Bicep VS Code extension](https://github.com/Azure/bicep/blob/main/docs/installing.md#bicep-vs-code-extension)
+First, author your Bicep code using the Bicep language service as part of the [Bicep VS Code extension](./docs/installing.md#bicep-vs-code-extension)
 
 Both [Az CLI](https://docs.microsoft.com/cli/azure/install-azure-cli) (2.20.0+) and the [PowerShell Az module](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps) (v5.6.0+) have Bicep support built-in. This means you can use the standard deployment commands with your `*.bicep` files and the tooling will transpile the code and send it to ARM on your behalf. For example, to deploy `main.bicep` to a resource group `my-rg`, we can use the CLI command we are already used to:
 
@@ -61,4 +55,4 @@ az deployment sub create -f ./template.001.bicep -l $(Location) -p ./template.pa
 
 ```
 
-For more detail on taking advantage of new Bicep constructs that replace an equivalent from ARM Templates, you can read the [moving from ARM => Bicep](https://github.com/Azure/bicep/blob/main/docs/arm2bicep.md) doc.
+For more detail on taking advantage of new Bicep constructs that replace an equivalent from ARM Templates, you can read the [moving from ARM => Bicep](./docs/arm2bicep.md) doc.

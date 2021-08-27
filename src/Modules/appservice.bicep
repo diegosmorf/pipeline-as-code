@@ -1,12 +1,12 @@
-param namePrefix string
+param appserviceName string
 param location string = resourceGroup().location
 param dockerImage string
 param dockerImageTag string
 param appPlanId string
 param tagValues object
 
-resource appService 'Microsoft.Web/sites@2020-12-01'  = {
-  name: '${namePrefix}-app-service'
+resource appService 'Microsoft.Web/sites@2021-01-15'  = {
+  name: appserviceName
   location: location    
   tags: tagValues
   properties: {    

@@ -4,25 +4,39 @@ parameters:
   AppName: ''
   CodeArea: ''
   Location: ''
-  BuildNumber: ''
-  ReleaseNumber: '' 
+  BuildNumber: ''  
+  DeployCommand: ''   
 
 steps:
-  - template: pipeline-template-print-variables.yml
-    parameters:
-      AzureSubscription: ${{parameters.AzureSubscription}}
-      Environment: ${{parameters.Environment}}
-      AppName: ${{parameters.AppName}}
-      CodeArea: ${{parameters.CodeArea}}
-      Location: ${{parameters.Location}}
-      BuildNumber: ${{parameters.BuildNumber}}
-      ReleaseNumber: ${{parameters.ReleaseNumber}}
+  # - task: DownloadBuildArtifacts@1
+  #   inputs:
+  #     buildType: 'current'
+  #     downloadType: 'single'
+  #     artifactName: 'artifact'
+  #     downloadPath: '$(System.ArtifactsDirectory)'
+  #     checkDownloadedFiles: true
+
+  - task: CmdLine@2
+    displayName: 'Print Variables'
+    inputs:
+      script: |      
+        echo 'AzureSubscription:' ${{parameters.AzureSubscription}}
+        echo 'Environment:' ${{parameters.Environment}}
+        echo 'AppName:' ${{parameters.AppName}}
+        echo 'CodeArea:' ${{parameters.CodeArea}}
+        echo 'Location:' ${{parameters.Location}}      
+        echo 'BuildNumber:'${{parameters.BuildNumber}}      
+        echo 'DeployCommand' ${{parameters.DeployCommand}}      
+        echo 'ArtifactsDirectory' $(System.ArtifactsDirectory)   
+        echo 'DefaultWorkingDirectory' $(System.DefaultWorkingDirectory)
+        echo 'WorkFolder' $(System.WorkFolder)
 
   - task: replacetokens@3
     displayName: 'Replace Variables'
     inputs:
-      rootDirectory: '$(System.DefaultWorkingDirectory)/src'
-      targetFiles: '**/*parameters.json'
+      rootDirectory: '$(System.WorkFolder)/1/artifact'
+      targetFiles: '**/parameter*.json'
+      verbosity: detailed
       encoding: 'auto'
       writeBOM: true
       actionOnMissing: 'warn'
@@ -32,11 +46,12 @@ steps:
       useLegacyPattern: false
       enableTransforms: false
       enableTelemetry: true
+
   - task: AzureCLI@2
     displayName: 'Deploy Artifact'
     inputs:
       azureSubscription: '${{parameters.AzureSubscription}}'
       scriptType: pscore
       scriptLocation: inlineScript
-      inlineScript: 'az deployment sub create -f ./template.001.bicep -l $(Location) -p ./template.parameters.json'
-      workingDirectory: '$(Build.SourcesDirectory)/src'
+      inlineScript: ${{parameters.DeployCommand}}
+      workingDirectory: '$(System.WorkFolder)/1/artifact'

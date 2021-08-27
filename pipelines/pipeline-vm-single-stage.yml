@@ -1,3 +1,5 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
 trigger:
   none
 
@@ -6,6 +8,8 @@ pool:
 
 variables:  
     - group: library-global
+    - name: BuildCommand
+      value: 'az bicep build -f ./template-vm-single.bicep'     
 
 stages:
 - stage: Build
@@ -15,3 +19,4 @@ stages:
       - template: pipeline-template-build.yml
         parameters:
           AzureSubscription: $(AzureServiceConnection)
+          BuildCommand: $(BuildCommand)

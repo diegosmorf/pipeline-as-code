@@ -1,0 +1,48 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
+trigger:
+  none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:  
+    - group: library-global
+    - name: BuildCommand
+      value: 'az bicep build -f ./template-appservice-single.bicep' 
+    - name: DeployCommand
+      value: 'az deployment sub create -f ./template-appservice-single.json -l $(Location) -p ./parameters-appservice.json'
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build    
+    steps:    
+      - script: echo $(AzureServiceConnection)
+      - template: pipeline-template-build.yml
+        parameters:
+          AzureSubscription: $(AzureServiceConnection)
+          BuildCommand: $(BuildCommand)
+
+- stage: Release
+  jobs:   
+  - deployment: Release_DEV
+    variables:  
+      - group: library-dev-app-001 
+    displayName: 'DEV'
+    environment:  'dev-app-001'
+    strategy:           
+      runOnce:
+        deploy:
+          steps:                    
+            
+            - template: pipeline-template-deploy.yml
+              parameters:
+                AzureSubscription: $(AzureServiceConnection)
+                Environment: $(Environment)
+                AppName: $(AppName)
+                CodeArea: $(CodeArea)
+                Location: $(Location)
+                BuildNumber: $(Build.BuildNumber)
+                ReleaseNumber: $(Release.ReleaseId)                                
+                DeployCommand: $(DeployCommand)

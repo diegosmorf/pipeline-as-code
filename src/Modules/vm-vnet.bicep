@@ -1,24 +1,27 @@
 param namePrefix string 
 param nameSufix string
 param location string = resourceGroup().location
+param addressPrefix string = '10.0.0.0/24'
+param tagValues object
 
-var name = '${namePrefix}-${uniqueString(resourceGroup().id)}'
+var name = '${namePrefix}-vnet-${nameSufix}'
 var subnetName = 'main-subnet'
 
-resource vnet_generic 'Microsoft.Network/virtualNetworks@2020-08-01' = {
-  name: '${namePrefix}-vnet-${nameSufix}'
+resource vnet_generic 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+  name: name
   location: location
+  tags: tagValues
   properties: {
     addressSpace: {
       addressPrefixes: [
-        '10.0.0.0/24'
+        addressPrefix
       ]
     }
     subnets: [
       {
         name: subnetName
         properties: {
-          addressPrefix: '10.0.0.0/24'
+          addressPrefix: addressPrefix
           delegations: []
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
@@ -29,7 +32,6 @@ resource vnet_generic 'Microsoft.Network/virtualNetworks@2020-08-01' = {
     enableDdosProtection: false
   }
 }
-
 
 output vnetId string = vnet_generic.id
 output subnetId string = '${vnet_generic.id}/subnets/${subnetName}'

@@ -9,14 +9,8 @@
             "value": "#{AppName}#"
         },
         "createdBy": {
-            "value": "Azure-DevOps-User"
-        },
-        "vmUserName": {
-            "value": "test_username"
-        },
-        "vmUserPass": {
-            "value": "$1test_password"
-        },
+            "value": "Azure-DevOps-Pipelines"
+        },        
         "billingCodeArea": {
             "value": "#{CodeArea}#"
         },

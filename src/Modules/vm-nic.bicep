@@ -3,11 +3,11 @@ param nameSufix string
 param location string = resourceGroup().location
 param subnetId string
 param privateIPAddress string =  '10.0.0.4'
+param tagValues object
 
-var vmName = '${namePrefix}${uniqueString(resourceGroup().id)}'
-
-resource nic 'Microsoft.Network/networkInterfaces@2020-08-01' = {
+resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
   name: '${namePrefix}-vm-${nameSufix}'
+  tags: tagValues
   location: location
   properties: {
     ipConfigurations: [

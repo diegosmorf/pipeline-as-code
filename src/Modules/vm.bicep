@@ -1,20 +1,23 @@
 param namePrefix string
 param nameSufix string
-param location string = resourceGroup().location
-param subnetId string
 param nicId string
-param ubuntuOsVersion string = '18.04-LTS'
+param imagePublisher string = 'Canonical'
+param imageOffer string = 'UbuntuServer'
+param imageSku string = '18.04-LTS'
+param imageVersion string = 'latest'
 param osDiskType string = 'Standard_LRS'
 param vmSize string = 'Standard_B1s'
 param username string
 param password string
+param tagValues object
 
 var vmName = '${namePrefix}-vm-${nameSufix}'
 
 // Create the vm
-resource vm_small 'Microsoft.Compute/virtualMachines@2019-07-01' = {
+resource vm 'Microsoft.Compute/virtualMachines@2021-04-01' = {
   name : vmName
   location: resourceGroup().location
+  tags: tagValues
   zones: [
     '1'
   ]
@@ -30,10 +33,10 @@ resource vm_small 'Microsoft.Compute/virtualMachines@2019-07-01' = {
         }
       }
       imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: ubuntuOsVersion
-        version: 'latest'
+        publisher: imagePublisher
+        offer: imageOffer
+        sku: imageSku
+        version: imageVersion
       }
     }
     osProfile: {
@@ -51,4 +54,4 @@ resource vm_small 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   }
 }
 
-output id string = vm_small.id
+output id string = vm.id

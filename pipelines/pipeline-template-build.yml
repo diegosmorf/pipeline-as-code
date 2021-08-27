@@ -1,17 +1,39 @@
 parameters:
   AzureSubscription: ''
+  BuildCommand: ''
 
 steps:
+
+  - task: CmdLine@2
+    displayName: 'Print Variables'
+    inputs:
+      script: |      
+        echo 'AzureSubscription:' ${{parameters.AzureSubscription}}        
+        echo 'BuildCommand' ${{parameters.BuildCommand}}      
+        echo 'ArtifactsDirectory' $(System.ArtifactsDirectory)   
+        echo 'DefaultWorkingDirectory' $(System.DefaultWorkingDirectory)
+        echo 'WorkFolder' $(System.WorkFolder)
+
   - task: AzureCLI@2  
     displayName: 'Build Artifact' 
     inputs: 
       azureSubscription: ${{parameters.AzureSubscription}}
       scriptType: 'pscore'  
       scriptLocation: 'inlineScript'  
-      inlineScript: 'az bicep build --file src/template.001.bicep' 
+      inlineScript: ${{parameters.BuildCommand}} 
+      workingDirectory: src
+  
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: src/artifact'
+    inputs:
+      SourceFolder: src
+      Contents: '**/*.json'
+      TargetFolder: src/artifact
+      CleanTargetFolder: true
+
   - task: PublishBuildArtifacts@1 
     displayName: 'Publish Artifact' 
     inputs: 
-      PathtoPublish: '$(Build.SourcesDirectory)/src'
-      ArtifactName: 'drop'  
+      PathtoPublish: src/artifact
+      ArtifactName: 'artifact'  
       publishLocation: 'Container' 

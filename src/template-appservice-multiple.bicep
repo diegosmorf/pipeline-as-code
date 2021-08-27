@@ -1,16 +1,15 @@
+//az deployment sub create -f .\src\template-appservice-multiple.bicep -l eastus -p .\src\parameters-appservice.json
 targetScope = 'subscription'
 
 param environmentName string
-param applicationName string
+param applicationName string 
 param createdBy string
 param billingCodeArea string
 param buildNumber string = '001'
-param vmUserName string
-param vmUserPass string
 param currentDate string = utcNow('yyyy-MM-dd')
 
-
 param tagValues object = {  
+  ApplicationName: applicationName
   Environment: environmentName
   CreatedBy: createdBy
   DeploymentDate: currentDate
@@ -22,13 +21,13 @@ var namePrefix = 'br-${environmentName}'
 var nameSufix = buildNumber
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
-  name: '${namePrefix}-rg-${nameSufix}'
+  name: '${namePrefix}-rg-appservice'
   location: deployment().location
   tags: tagValues
 }
 
 module appPlanDeploy 'Modules/appPlan.bicep' = {
-  name: '${namePrefix}-app-plan-${nameSufix}'
+  name: '${namePrefix}-appplan-${applicationName}-${nameSufix}'
   scope: resourceGroup
   params:{
     namePrefix: namePrefix
@@ -49,10 +48,10 @@ var websites = [
 ]
 
 module siteDeploy 'Modules/appservice.bicep' = [ for site in websites:{
-  name: '${namePrefix}-app-service-${site.name}-${nameSufix}'
+  name: 'app-service-${site.name}'
   scope: resourceGroup
   params:{
-    namePrefix: '${namePrefix}-${site.name}'
+    appserviceName: '${namePrefix}-app-service-${applicationName}-${site.name}'
     appPlanId: appPlanDeploy.outputs.planId
     dockerImage: 'nginxdemos/hello'
     dockerImageTag: site.tag    

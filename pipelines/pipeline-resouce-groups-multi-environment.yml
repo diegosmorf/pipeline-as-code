@@ -1,3 +1,5 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
 trigger:
   none
 
@@ -5,7 +7,11 @@ pool:
   vmImage: ubuntu-latest
 
 variables:  
-    - group: library-global
+    - group: library-global    
+    - name: BuildCommand
+      value: 'az bicep build -f ./template-resource-groups.bicep' 
+    - name: DeployCommand
+      value: 'az deployment sub create -f ./template-resource-groups.json -l $(Location) -p ./parameters-resource-groups.json'
 
 stages:
 - stage: Build
@@ -16,6 +22,7 @@ stages:
       - template: pipeline-template-build.yml
         parameters:
           AzureSubscription: $(AzureServiceConnection)
+          BuildCommand: $(BuildCommand)
 
 - stage: Release
   jobs:   
@@ -23,12 +30,11 @@ stages:
     variables:  
       - group: library-dev-app-001 
     displayName: 'DEV'
-    environment:  '$(Environment)-$(AppName)'
+    environment:  'dev-app-001'
     strategy:           
       runOnce:
         deploy:
-          steps:                    
-            - checkout: self
+          steps:                                
             - template: pipeline-template-deploy.yml
               parameters:
                 AzureSubscription: $(AzureServiceConnection)
@@ -38,6 +44,7 @@ stages:
                 Location: $(Location)
                 BuildNumber: $(Build.BuildNumber)
                 ReleaseNumber: $(Release.ReleaseId)
+                DeployCommand: $(DeployCommand)
 
   - deployment: Release_QA
     dependsOn:
@@ -45,12 +52,11 @@ stages:
     variables:  
       - group: library-qa-app-001 
     displayName: 'QA'
-    environment: '$(Environment)-$(AppName)'
+    environment: 'qa-app-001'
     strategy:           
       runOnce:
         deploy:
-          steps:                    
-            - checkout: self
+          steps:                                
             - template: pipeline-template-deploy.yml
               parameters:
                 AzureSubscription: $(AzureServiceConnection)
@@ -58,8 +64,8 @@ stages:
                 AppName: $(AppName)
                 CodeArea: $(CodeArea)
                 Location: $(Location)
-                BuildNumber: $(Build.BuildNumber)
-                ReleaseNumber: $(Release.ReleaseId)
+                BuildNumber: $(Build.BuildNumber)                
+                DeployCommand: $(DeployCommand)
 
   - deployment: Release_PRD
     dependsOn:
@@ -67,12 +73,11 @@ stages:
     variables:  
       - group: library-prd-app-001 
     displayName: 'PRD'
-    environment: '$(Environment)-$(AppName)'
+    environment: 'prd-app-001'
     strategy:           
       runOnce:
         deploy:
-          steps:                    
-            - checkout: self
+          steps:                                
             - template: pipeline-template-deploy.yml
               parameters:
                 AzureSubscription: $(AzureServiceConnection)
@@ -80,5 +85,5 @@ stages:
                 AppName: $(AppName)
                 CodeArea: $(CodeArea)
                 Location: $(Location)
-                BuildNumber: $(Build.BuildNumber)
-                ReleaseNumber: $(Release.ReleaseId)
+                BuildNumber: $(Build.BuildNumber)                
+                DeployCommand: $(DeployCommand)
