@@ -26,7 +26,7 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   tags: tagValues
 }
 
-module appPlanDeploy 'Modules/appPlan.bicep' = {
+module appPlanDeploy 'components/appPlan.bicep' = {
   name: '${namePrefix}-appplan-${applicationName}-${nameSufix}'
   scope: resourceGroup
   params:{
@@ -47,7 +47,7 @@ var websites = [
   }
 ]
 
-module siteDeploy 'Modules/appservice.bicep' = [ for site in websites:{
+module siteDeploy 'components/appservice.bicep' = [ for site in websites:{
   name: 'app-service-${site.name}'
   scope: resourceGroup
   params:{

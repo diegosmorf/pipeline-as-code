@@ -30,7 +30,7 @@ var namePrefix = 'br-${environmentName}'
 var nameSufix = buildNumber
 var nameSqlServer = '${namePrefix}-sqlserver-${nameSufix}'
 
-module sql 'Modules/sql-server.bicep' = {
+module sql 'components/sql-server.bicep' = {
   name: nameSqlServer
   
   params: {

@@ -25,7 +25,7 @@ param tagValues object = {
 var namePrefix = 'br-${environmentName}'
 var nameSufix = buildNumber
 
-module kv 'Modules/key-vault.bicep' = { 
+module kv 'components/key-vault.bicep' = { 
   name: '${namePrefix}-kv-${nameSufix}'  
   params: {
     namePrefix: namePrefix
@@ -38,7 +38,7 @@ module kv 'Modules/key-vault.bicep' = {
   }
 }
 
-module secret1 'Modules/key-vault-secret.bicep' = {
+module secret1 'components/key-vault-secret.bicep' = {
   name: '${namePrefix}-${secretName}' 
   params: {
     kvName: kv.outputs.kvName

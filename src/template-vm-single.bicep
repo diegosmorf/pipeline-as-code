@@ -28,7 +28,7 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   tags: tagValues
 }
 
-module vnet 'Modules/vm-vnet.bicep'  = {
+module vnet 'components/vm-vnet.bicep'  = {
   name: '${namePrefix}-vnet-${nameSufix}'
   scope: resourceGroup
   params: {
@@ -38,7 +38,7 @@ module vnet 'Modules/vm-vnet.bicep'  = {
   }
 }
 
-module nic 'Modules/vm-nic.bicep' = {
+module nic 'components/vm-nic.bicep' = {
   name: '${namePrefix}-nic-${nameSufix}'
   scope: resourceGroup
   params: {
@@ -49,7 +49,7 @@ module nic 'Modules/vm-nic.bicep' = {
   }
 }
 
-module vmLinux 'Modules/vm.bicep'  = {
+module vmLinux 'components/vm.bicep'  = {
   name: '${namePrefix}-vm-${nameSufix}'
   scope: resourceGroup
   params: {

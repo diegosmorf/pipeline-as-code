@@ -26,7 +26,7 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   tags: tagValues
 }
 
-module appPlanDeploy 'Modules/appPlan.bicep' = {
+module appPlanDeploy 'components/appPlan.bicep' = {
   name: '${namePrefix}-appplan-${nameSufix}'
   scope: resourceGroup
   params:{
@@ -36,7 +36,7 @@ module appPlanDeploy 'Modules/appPlan.bicep' = {
   }
 }
 
-module siteDeploy 'Modules/appservice.bicep' = {
+module siteDeploy 'components/appservice.bicep' = {
   name: '${namePrefix}-appservice-${nameSufix}'
   scope: resourceGroup
   params:{
